@@ -1,0 +1,24 @@
+services:
+  rclone-mount:
+    image: ipromknight/rclone-mount:latest
+    container_name: rclone-mount
+    restart: unless-stopped
+    ports:
+      - "5572:5572"
+    environment:
+      MOUNTNAME: "somemount:" # Name of the mount within the rclone.conf config file
+      ENABLE_RC: "true"
+      USE_MMAP: "true"
+      ENABLE_BANDWIDTH_LIMIT: "true"
+      BANDWIDTH_LIMIT: "100M"
+      TZ: Etc/UTC
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    devices:
+      - /dev/fuse:/dev/fuse:rwm
+    volumes:
+      - ./rclone.conf:/data/rclone.conf
+      - ./cache:/cache
+      - ./mnt:/data/mnt:rshared
